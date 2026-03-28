@@ -1,0 +1,124 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to right, #1e3c72, #2a5298);
+}
+
+.chat-container {
+    width: 420px;
+    height: 650px;
+    background: white;
+    margin: 30px auto;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.chat-header {
+    background: linear-gradient(to right, #00c6ff, #0072ff);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.chat-box {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.message {
+    margin: 10px;
+    padding: 12px;
+    border-radius: 15px;
+    max-width: 75%;
+    font-size: 14px;
+}
+
+.user {
+    background: #0072ff;
+    color: white;
+    margin-left: auto;
+}
+
+.bot {
+    background: #f1f1f1;
+}
+
+.quick-replies {
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick-replies button {
+    background: #e6f0ff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.quick-replies button:hover {
+    background: #0072ff;
+    color: white;
+}
+
+.input-area {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    outline: none;
+}
+
+button {
+    background: #0072ff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+.card {
+    background: #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    max-width: 90%;
+}
+
+.card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.card-content {
+    padding: 10px;
+}
+
+.card-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card button {
+    background: #0072ff;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 5px;
+}
