@@ -132,7 +132,7 @@ function showCard(place, hotel, img, map) {
         <div class="card-content">
             <div class="card-title">📍 ${place}</div>
             <div>🏨 ${hotel}</div>
-            <button onclick="window.open('${map}', '_blank')">View on Map</button>
+            <button onclick="showMap('${place}')">View Map</button>
         </div>
     `;
 
@@ -153,4 +153,25 @@ function showTyping() {
 function removeTyping() {
     let typing = document.getElementById("typing");
     if (typing) typing.remove();
+}
+function showMap(place) {
+    let chatBox = document.getElementById("chatBox");
+
+    let mapDiv = document.createElement("div");
+    mapDiv.className = "card";
+
+    let mapURL = `https://www.google.com/maps?q=${place}&output=embed`;
+
+    mapDiv.innerHTML = `
+        <iframe 
+            width="100%" 
+            height="200" 
+            style="border:0; border-radius:10px;"
+            src="${mapURL}" 
+            loading="lazy">
+        </iframe>
+    `;
+
+    chatBox.appendChild(mapDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
