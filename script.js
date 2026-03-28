@@ -85,41 +85,33 @@ function showResult() {
     setTimeout(() => {
         removeTyping();
 
-        addMessage("✨ Here are your top travel recommendations:", "bot");
+        fetch("http://127.0.0.1:5000/get_recommendations", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        interest: userData.interest
+    })
+})
+.then(res => res.json())
+.then(data => {
 
-        let destinations = [];
+    console.log(data); // 👈 ADD THIS
 
-        if (userData.interest === "Adventure") {
-            destinations = [
-                { place: "Manali", hotel: "Mountain View Resort", img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470", map: "https://www.google.com/maps?q=manali" },
-                { place: "Rishikesh", hotel: "River Side Camp", img: "https://images.unsplash.com/photo-1549887534-3db8d1c2c06b", map: "https://www.google.com/maps?q=rishikesh" },
-                { place: "Leh Ladakh", hotel: "Snow Peak Hotel", img: "https://images.unsplash.com/photo-1605540436563-5bca919ae766", map: "https://www.google.com/maps?q=leh+ladakh" }
-            ];
-        }
-        else if (userData.interest === "Spiritual") {
-            destinations = [
-                { place: "Varanasi", hotel: "Ganga View Hotel", img: "https://images.unsplash.com/photo-1561361513-2d000a50f1f9", map: "https://www.google.com/maps?q=varanasi" },
-                { place: "Haridwar", hotel: "Holy Stay", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41", map: "https://www.google.com/maps?q=haridwar" },
-                { place: "Tirupati", hotel: "Temple Residency", img: "https://images.unsplash.com/photo-1589307004394-1c9bcbf61a1c", map: "https://www.google.com/maps?q=tirupati" }
-            ];
-        }
-        else {
-            destinations = [
-                { place: "Goa", hotel: "Sea View Resort", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e", map: "https://www.google.com/maps?q=goa" },
-                { place: "Jaipur", hotel: "Royal Palace Hotel", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41", map: "https://www.google.com/maps?q=jaipur" },
-                { place: "Kerala", hotel: "Backwater Resort", img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470", map: "https://www.google.com/maps?q=kerala" }
-            ];
-        }
+    addMessage("✨ Here are your recommendations:", "bot");
 
-        console.log(destinations); // 👈 DEBUG (important)
+    data.forEach(dest => {
+    showCard(
+        dest.place,
+        dest.hotel,
+        getImage(dest.place),
+        "https://www.google.com/maps?q=" + dest.place
+    );
+});
+});
 
-        destinations.forEach(dest => {
-            showCard(dest.place, dest.hotel, dest.img, dest.map);
-        });
-
-        document.getElementById("quickReplies").innerHTML = "";
-
-    }, 1500);
+    }, 1000);
 }
 function showCard(place, hotel, img, map) {
     let chatBox = document.getElementById("chatBox");
@@ -174,4 +166,36 @@ function showMap(place) {
 
     chatBox.appendChild(mapDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
+}
+function getImage(place) {
+    place = place.toLowerCase();
+
+    if (place.includes("manali"))
+        return "https://images.unsplash.com/photo-1501785888041-af3ef285b470";
+
+    if (place.includes("rishikesh"))
+        return "https://images.unsplash.com/photo-1549887534-3db8d1c2c06b";
+
+    if (place.includes("leh"))
+        return "https://images.unsplash.com/photo-1605540436563-5bca919ae766";
+
+    if (place.includes("varanasi"))
+        return "https://images.unsplash.com/photo-1561361513-2d000a50f1f9";
+
+    if (place.includes("haridwar"))
+        return "https://images.unsplash.com/photo-1599661046289-e31897846e41";
+
+    if (place.includes("tirupati"))
+        return "https://images.unsplash.com/photo-1589307004394-1c9bcbf61a1c";
+
+    if (place.includes("goa"))
+        return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
+
+    if (place.includes("jaipur"))
+        return "https://images.unsplash.com/photo-1599661046289-e31897846e41";
+
+    if (place.includes("kerala"))
+        return "https://images.unsplash.com/photo-1501785888041-af3ef285b470";
+
+    return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
 }
