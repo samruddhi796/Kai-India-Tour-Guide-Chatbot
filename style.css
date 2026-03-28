@@ -125,3 +125,12 @@ button {
 iframe {
     border-radius: 10px;
 }
+.reset-btn {
+    background: white;
+    color: #0072ff;
+    border: none;
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 10px;
+    cursor: pointer;
+}

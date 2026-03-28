@@ -99,8 +99,7 @@ function showResult() {
 
     console.log(data); // 👈 ADD THIS
 
-    addMessage("✨ Here are your recommendations:", "bot");
-
+    addMessage(`✨ Based on your interest in ${userData.interest}, I found these perfect destinations for you!`, "bot");
     data.forEach(dest => {
     showCard(
         dest.place,
@@ -199,3 +198,11 @@ function getImage(place) {
 
     return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
 }
+function resetChat() {
+    location.reload();
+}
+document.getElementById("userInput").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
