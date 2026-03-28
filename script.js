@@ -79,62 +79,47 @@ function handleResponse(msg) {
         showResult();
     }
 }
-
 function showResult() {
     showTyping();
 
     setTimeout(() => {
         removeTyping();
 
-        let place = "Goa";
-        let hotel = "Sea View Resort";
-        let img = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
-        let map = "https://www.google.com/maps/search/goa";
+        addMessage("✨ Here are your top travel recommendations:", "bot");
 
-        if (userData.interest === "Spiritual") {
-            place = "Varanasi";
-            hotel = "Ganga Hotel";
-            img = "https://images.unsplash.com/photo-1561361513-2d000a50f1f9";
-            map = "https://www.google.com/maps/search/varanasi";
+        let destinations = [];
+
+        if (userData.interest === "Adventure") {
+            destinations = [
+                { place: "Manali", hotel: "Mountain View Resort", img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470", map: "https://www.google.com/maps?q=manali" },
+                { place: "Rishikesh", hotel: "River Side Camp", img: "https://images.unsplash.com/photo-1549887534-3db8d1c2c06b", map: "https://www.google.com/maps?q=rishikesh" },
+                { place: "Leh Ladakh", hotel: "Snow Peak Hotel", img: "https://images.unsplash.com/photo-1605540436563-5bca919ae766", map: "https://www.google.com/maps?q=leh+ladakh" }
+            ];
         }
-        else if (userData.interest === "Adventure") {
-            place = "Manali";
-            hotel = "Mountain View Hotel";
-            img = "https://images.unsplash.com/photo-1501785888041-af3ef285b470";
-            map = "https://www.google.com/maps/search/manali";
+        else if (userData.interest === "Spiritual") {
+            destinations = [
+                { place: "Varanasi", hotel: "Ganga View Hotel", img: "https://images.unsplash.com/photo-1561361513-2d000a50f1f9", map: "https://www.google.com/maps?q=varanasi" },
+                { place: "Haridwar", hotel: "Holy Stay", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41", map: "https://www.google.com/maps?q=haridwar" },
+                { place: "Tirupati", hotel: "Temple Residency", img: "https://images.unsplash.com/photo-1589307004394-1c9bcbf61a1c", map: "https://www.google.com/maps?q=tirupati" }
+            ];
+        }
+        else {
+            destinations = [
+                { place: "Goa", hotel: "Sea View Resort", img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e", map: "https://www.google.com/maps?q=goa" },
+                { place: "Jaipur", hotel: "Royal Palace Hotel", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41", map: "https://www.google.com/maps?q=jaipur" },
+                { place: "Kerala", hotel: "Backwater Resort", img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470", map: "https://www.google.com/maps?q=kerala" }
+            ];
         }
 
-        addMessage("✨ Here’s your perfect destination:", "bot");
-        showCard(place, hotel, img, map);
+        console.log(destinations); // 👈 DEBUG (important)
+
+        destinations.forEach(dest => {
+            showCard(dest.place, dest.hotel, dest.img, dest.map);
+        });
 
         document.getElementById("quickReplies").innerHTML = "";
 
     }, 1500);
-}
-function showResult() {
-    let place = "Goa";
-    let hotel = "Sea View Resort";
-    let img = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
-    let map = "https://www.google.com/maps/search/goa";
-
-    if (userData.interest === "Spiritual") {
-        place = "Varanasi";
-        hotel = "Ganga Hotel";
-        img = "https://images.unsplash.com/photo-1561361513-2d000a50f1f9";
-        map = "https://www.google.com/maps/search/varanasi";
-    }
-    else if (userData.interest === "Adventure") {
-        place = "Manali";
-        hotel = "Mountain View Hotel";
-        img = "https://images.unsplash.com/photo-1501785888041-af3ef285b470";
-        map = "https://www.google.com/maps/search/manali";
-    }
-
-    addMessage("✨ Here’s your perfect destination:", "bot");
-
-    showCard(place, hotel, img, map);
-
-    document.getElementById("quickReplies").innerHTML = "";
 }
 function showCard(place, hotel, img, map) {
     let chatBox = document.getElementById("chatBox");
