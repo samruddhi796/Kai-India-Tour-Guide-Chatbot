@@ -31,6 +31,7 @@ body {
     overflow-y: auto;
 }
 
+/* Messages */
 .message {
     margin: 10px;
     padding: 12px;
@@ -47,29 +48,34 @@ body {
 
 .bot {
     background: #f1f1f1;
+    color: black;
 }
 
+/* Quick Replies */
 .quick-replies {
-    padding: 10px;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
+    padding: 10px;
+    justify-content: center;
 }
 
 .quick-replies button {
-    background: #e6f0ff;
+    background: #1e88e5;
+    color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 8px 14px;
     border-radius: 20px;
     cursor: pointer;
+    transition: 0.3s;
     font-size: 12px;
 }
 
 .quick-replies button:hover {
-    background: #0072ff;
-    color: white;
+    background: #1565c0;
 }
 
+/* Input Area */
 .input-area {
     display: flex;
     border-top: 1px solid #ddd;
@@ -89,8 +95,10 @@ button {
     padding: 10px 15px;
     cursor: pointer;
 }
+
+/* Cards */
 .card {
-    background: #fff;
+    background: white;
     border-radius: 15px;
     overflow: hidden;
     margin: 10px;
@@ -122,9 +130,14 @@ button {
     cursor: pointer;
     margin-top: 5px;
 }
+
+/* Map */
 iframe {
     border-radius: 10px;
+    margin: 10px;
 }
+
+/* Reset Button */
 .reset-btn {
     background: white;
     color: #0072ff;

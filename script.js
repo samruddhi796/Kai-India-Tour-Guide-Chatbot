@@ -3,6 +3,12 @@ let userData = {};
 
 window.onload = function () {
     askQuestion();
+
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
 };
 
 function sendMessage(text = null) {
@@ -14,7 +20,51 @@ function sendMessage(text = null) {
     addMessage(message, "user");
     input.value = "";
 
-    handleResponse(message);
+    document.getElementById("quickReplies").innerHTML = "";
+
+    // ✅ FLOW QUESTIONS
+    if (step === 0) {
+        userData.type = message;
+        step++;
+        askQuestion();
+        return;
+    }
+
+    if (step === 1) {
+        userData.interest = message;
+        step++;
+        askQuestion();
+        return;
+    }
+
+    if (step === 2) {
+        userData.budget = message;
+        step++;
+        showResult();
+        return;
+    }
+
+    // 🤖 AFTER FLOW → AI RESPONSE
+    showTyping();
+
+    fetch("http://127.0.0.1:5000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        removeTyping();
+        addMessage(data.reply, "bot");
+    })
+    .catch(() => {
+        removeTyping();
+        addMessage("❌ AI not responding", "bot");
+    });
 }
 
 function addMessage(text, type) {
@@ -59,77 +109,9 @@ function askQuestion() {
             showQuickReplies(["Low", "Medium", "High"]);
         }
 
-    }, 1000);
+    }, 800);
 }
 
-function handleResponse(msg) {
-    if (step === 0) {
-        userData.type = msg;
-        step++;
-        askQuestion();
-    }
-    else if (step === 1) {
-        userData.interest = msg;
-        step++;
-        askQuestion();
-    }
-    else if (step === 2) {
-        userData.budget = msg;
-        step++;
-        showResult();
-    }
-}
-function showResult() {
-    showTyping();
-
-    setTimeout(() => {
-        removeTyping();
-
-        fetch("http://127.0.0.1:5000/get_recommendations", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        interest: userData.interest
-    })
-})
-.then(res => res.json())
-.then(data => {
-
-    console.log(data); // 👈 ADD THIS
-
-    addMessage(`✨ Based on your interest in ${userData.interest}, I found these perfect destinations for you!`, "bot");
-    data.forEach(dest => {
-    showCard(
-        dest.place,
-        dest.hotel,
-        getImage(dest.place),
-        "https://www.google.com/maps?q=" + dest.place
-    );
-});
-});
-
-    }, 1000);
-}
-function showCard(place, hotel, img, map) {
-    let chatBox = document.getElementById("chatBox");
-
-    let card = document.createElement("div");
-    card.className = "card";
-
-    card.innerHTML = `
-        <img src="${img}" alt="${place}">
-        <div class="card-content">
-            <div class="card-title">📍 ${place}</div>
-            <div>🏨 ${hotel}</div>
-            <button onclick="showMap('${place}')">View Map</button>
-        </div>
-    `;
-
-    chatBox.appendChild(card);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
 function showTyping() {
     let chatBox = document.getElementById("chatBox");
 
@@ -141,31 +123,73 @@ function showTyping() {
     chatBox.appendChild(typing);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 function removeTyping() {
     let typing = document.getElementById("typing");
     if (typing) typing.remove();
 }
+
+function showResult() {
+    addMessage("✨ Finding best places for you...", "bot");
+
+    fetch("http://127.0.0.1:5000/get_recommendations", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            interest: userData.interest
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        data.forEach(dest => {
+            showCard(dest.place, dest.hotel, getImage(dest.place));
+        });
+    })
+    .catch(() => {
+        addMessage("❌ Error getting recommendations", "bot");
+    });
+}
+
+function showCard(place, hotel, img) {
+    let chatBox = document.getElementById("chatBox");
+
+    let card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+        <img src="${img}">
+        <div class="card-content">
+            <div class="card-title">📍 ${place}</div>
+            <div>🏨 ${hotel}</div>
+            <button onclick="showMap('${place}')">View Map</button>
+        </div>
+    `;
+
+    chatBox.appendChild(card);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // 🔥 ADD THIS
+    getWeather(place);
+}
+
 function showMap(place) {
     let chatBox = document.getElementById("chatBox");
 
-    let mapDiv = document.createElement("div");
-    mapDiv.className = "card";
+    let map = document.createElement("div");
 
-    let mapURL = `https://www.google.com/maps?q=${place}&output=embed`;
-
-    mapDiv.innerHTML = `
+    map.innerHTML = `
         <iframe 
             width="100%" 
-            height="200" 
-            style="border:0; border-radius:10px;"
-            src="${mapURL}" 
-            loading="lazy">
+            height="200"
+            src="https://www.google.com/maps?q=${place}&output=embed">
         </iframe>
     `;
 
-    chatBox.appendChild(mapDiv);
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatBox.appendChild(map);
 }
+
 function getImage(place) {
     place = place.toLowerCase();
 
@@ -198,11 +222,28 @@ function getImage(place) {
 
     return "https://images.unsplash.com/photo-1507525428034-b723cf961d3e";
 }
+
 function resetChat() {
     location.reload();
 }
-document.getElementById("userInput").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        sendMessage();
-    }
-});
+
+function getWeather(place) {
+    const apiKey = "8f111a98caa2e8b98ccbb009ab5f78fd";
+
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${place}&appid=${apiKey}&units=metric`)
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("API error");
+        }
+        return res.json();
+    })
+    .then(data => {
+        let temp = data.main.temp;
+        let weather = data.weather[0].main;
+
+        addMessage(`🌤️ Weather in ${place}: ${temp}°C, ${weather}`, "bot");
+    })
+    .catch(() => {
+        addMessage(`⚠️ Weather not available for ${place}`, "bot");
+    });
+}

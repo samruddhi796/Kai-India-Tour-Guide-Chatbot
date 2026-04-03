@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Kai - Travel Guide Chatbot</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
 </head>
 
 <body>
@@ -14,6 +15,7 @@
         🌍 Kai - Smart Travel Assistant
     </div>
 
+    <!-- ✅ ONLY ONE chatBox -->
     <div class="chat-box" id="chatBox">
         <div class="message bot">
             Hey! I'm Kai ✈️<br>
@@ -21,15 +23,17 @@
         </div>
     </div>
 
-
+    <!-- Quick replies -->
     <div class="quick-replies" id="quickReplies"></div>
 
+    <!-- Input -->
     <div class="input-area">
         <input type="text" id="userInput" placeholder="Type or choose option...">
         <button onclick="sendMessage()">Send</button>
     </div>
 
-</div>
+    <!-- Restart button -->
+    <button onclick="resetChat()" class="reset-btn">Restart</button>
 
 </div>
 
@@ -37,4 +41,5 @@
 
 </body>
 </html>
-<button onclick="resetChat()" class="reset-btn">Restart</button>
+
+
