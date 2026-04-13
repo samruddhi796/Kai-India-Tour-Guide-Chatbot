@@ -2,9 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kai - Travel Guide Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kai - Smart Travel Assistant</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="data:,">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -12,14 +14,14 @@
 <div class="chat-container">
 
     <div class="chat-header">
-        🌍 Kai - Smart Travel Assistant
+        <i class="fas fa-globe-americas"></i> Kai - Smart Travel Assistant
     </div>
 
     <!-- ✅ ONLY ONE chatBox -->
     <div class="chat-box" id="chatBox">
         <div class="message bot">
-            Hey! I'm Kai ✈️<br>
-            Let’s plan your trip! 😊
+            <i class="fas fa-plane"></i> Hey! I'm Kai <br>
+            Let's plan your perfect trip! 😊
         </div>
     </div>
 
@@ -28,12 +30,12 @@
 
     <!-- Input -->
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Type or choose option...">
-        <button onclick="sendMessage()">Send</button>
+        <input type="text" id="userInput" placeholder="Type your message or choose an option...">
+        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
     </div>
 
     <!-- Restart button -->
-    <button onclick="resetChat()" class="reset-btn">Restart</button>
+    <button onclick="resetChat()" class="reset-btn"><i class="fas fa-redo"></i> Restart</button>
 
 </div>
 
