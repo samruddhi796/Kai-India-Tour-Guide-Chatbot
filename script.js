@@ -12,16 +12,16 @@ window.onload = function () {
     });
 };
 
-function sendMessage() {
+function sendMessage(selectedText) {
     let input = document.getElementById("userInput");
-    let message = input.value.trim();
+    let message = typeof selectedText === "string" && selectedText.trim() !== "" ? selectedText.trim() : input.value.trim();
 
     if (message === "") return;
 
     addMessage(message, "user");
     input.value = "";
+    document.getElementById("quickReplies").innerHTML = "";
 
-    // Step-based questions first
     if (step === 0) {
         userData.type = message;
         step++;
@@ -43,7 +43,7 @@ function sendMessage() {
         return;
     }
 
-    // ✅ AFTER QUESTIONS → AI MODE
+    // ✅ AI PART
     showTyping();
 
     fetch("http://127.0.0.1:5000/chat", {
@@ -67,29 +67,6 @@ function sendMessage() {
     });
 }
 
-function addMessage(text, type) {
-    let chatBox = document.getElementById("chatBox");
-
-    let msg = document.createElement("div");
-    msg.className = "message " + type;
-
-    let avatarSrc = type === "bot" 
-        ? "https://i.pinimg.com/1200x/88/74/1a/88741afee32df444a59ae2f4e1d4ba12.jpg"
-        : "https://i.pinimg.com/736x/d4/c7/6e/d4c76e1e6087273afb2368f742a53ae5.jpg";
-    let avatarAlt = type === "bot" ? "Kai robot" : "You";
-
-    msg.innerHTML = `
-        <img src="${avatarSrc}" alt="${avatarAlt}" class="message-avatar" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';">
-        <div class="message-content">
-            ${text}
-            <div class="message-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-        </div>
-    `;
-
-    chatBox.appendChild(msg);
-    chatBox.scrollTop = chatBox.scrollHeight;
-}
-
 function showQuickReplies(options) {
     let container = document.getElementById("quickReplies");
     container.innerHTML = "";
@@ -103,7 +80,7 @@ function showQuickReplies(options) {
 }
 
 function askQuestion() {
-    showTyping();
+    
 
     setTimeout(() => {
         removeTyping();
@@ -125,26 +102,37 @@ function askQuestion() {
 }
 
 function showTyping() {
+    removeTyping(); // ✅ remove old typing first
+
     let chatBox = document.getElementById("chatBox");
 
     let typing = document.createElement("div");
     typing.className = "message bot";
     typing.id = "typing";
-
-    typing.innerHTML = `
-        <img src="https://images.unsplash.com/photo-1579033100448-9f1f623cb572?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Kai" class="message-avatar" onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}';">
-        <div class="message-content">
-            <i class="fas fa-circle-notch fa-spin"></i> Kai is typing...
-        </div>
-    `;
+    typing.textContent = "Kai is typing...";
 
     chatBox.appendChild(typing);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function removeTyping() {
-    let typing = document.getElementById("typing");
-    if (typing) typing.remove();
+    document.querySelectorAll("#typing").forEach(node => node.remove());
+}
+
+function addMessage(text, sender = "bot") {
+    removeTyping();
+
+    let chatBox = document.getElementById("chatBox");
+    let message = document.createElement("div");
+    message.className = `message ${sender}`;
+
+    let content = document.createElement("div");
+    content.className = "message-content";
+    content.textContent = text;
+    message.appendChild(content);
+
+    chatBox.appendChild(message);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function showResult() {
@@ -300,10 +288,3 @@ function getWeather(place) {
     });
 }
 
-if (step < 3) {
-    // normal flow
-    handleOption(message);
-} else {
-    // AI mode
-    callAI(message);
-}

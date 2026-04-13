@@ -6,15 +6,13 @@ from groq import Groq
 from dotenv import load_dotenv
 import os
 
-load_dotenv()   # ✅ this loads .env file
-
 app = Flask(__name__)
 CORS(app)
 
 
+load_dotenv()   # ✅ this loads .env file
+
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
-
 
 #  Recommendation API
 @app.route("/get_recommendations", methods=["POST"])
