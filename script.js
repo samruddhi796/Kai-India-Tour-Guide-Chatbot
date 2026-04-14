@@ -19,6 +19,7 @@ function sendMessage(selectedText) {
     if (message === "") return;
 
     addMessage(message, "user");
+
     input.value = "";
     document.getElementById("quickReplies").innerHTML = "";
 
@@ -58,14 +59,16 @@ function sendMessage(selectedText) {
     .then(res => res.json())
     .then(data => {
         removeTyping();
-        addMessage(data.reply, "bot");
+       addMessage(data.reply, "bot");
+         speak(data.reply); // 🔊 AI speaks
     })
-    .catch(err => {
-        removeTyping();
-        addMessage("❌ AI not responding", "bot");
-        console.error(err);
-    });
-}
+   .catch(err => {
+    removeTyping();
+    let msg = "AI not responding";
+    addMessage("❌ " + msg, "bot");
+    speak(msg);
+});}
+    
 
 function showQuickReplies(options) {
     let container = document.getElementById("quickReplies");
@@ -86,15 +89,21 @@ function askQuestion() {
         removeTyping();
 
         if (step === 0) {
-            addMessage("Are you traveling solo, with friends, or family?", "bot");
+            let msg = "Are you traveling solo, with friends, or family?";
+            addMessage(msg, "bot");
+            speak(msg);
             showQuickReplies(["Solo", "Friends", "Family"]);
         }
         else if (step === 1) {
-            addMessage("What type of trip do you prefer?", "bot");
+            let msg = "What type of trip do you prefer?";
+            addMessage(msg, "bot");
+            speak(msg);
             showQuickReplies(["Adventure", "Spiritual", "Relax", "Mixed"]);
         }
         else if (step === 2) {
-            addMessage("What is your budget?", "bot");
+            let msg = "What is your budget?";
+            addMessage(msg, "bot");
+            speak(msg);
             showQuickReplies(["Low", "Medium", "High"]);
         }
 
@@ -102,14 +111,21 @@ function askQuestion() {
 }
 
 function showTyping() {
-    removeTyping(); // ✅ remove old typing first
+    removeTyping();
 
     let chatBox = document.getElementById("chatBox");
 
     let typing = document.createElement("div");
     typing.className = "message bot";
     typing.id = "typing";
-    typing.textContent = "Kai is typing...";
+
+    typing.innerHTML = `
+        <div class="message-content">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+    `;
 
     chatBox.appendChild(typing);
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -136,7 +152,8 @@ function addMessage(text, sender = "bot") {
 }
 
 function showResult() {
-    addMessage("✨ Finding the best places for you...", "bot");
+    addMessage("✨ Here are some places you might love!", "bot");
+    speak("Here are some places you might love!");
 
     fetch("http://127.0.0.1:5000/get_recommendations", {
         method: "POST",
@@ -156,6 +173,7 @@ function showResult() {
     })
     .catch(() => {
         addMessage("❌ Error getting recommendations", "bot");
+        speak("❌ Error getting recommendations"); // 🔊 AI speaks
     });
 }
 
@@ -281,10 +299,90 @@ function getWeather(place) {
         let temp = data.main.temp;
         let weather = data.weather[0].main;
 
-        addMessage(`🌤️ Weather in ${place}: ${temp}°C, ${weather}`, "bot");
+       let msg = `Weather in ${place}: ${temp}°C, ${weather}`;
+       addMessage(`🌤️ ${msg}`, "bot");
+      
     })
     .catch(() => {
         addMessage(`⚠️ Weather not available for ${place}`, "bot");
+        
     });
 }
 
+function startVoice() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        addMessage("❌ Voice not supported in this browser", "bot");
+        speak("❌ Voice not supported in this browser");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    recognition.start();
+
+    addMessage("🎤 Listening...", "bot");
+
+    recognition.onresult = function(event) {
+        let transcript = event.results[0][0].transcript;
+
+        document.getElementById("userInput").value = transcript;
+
+
+        sendMessage();
+    };
+
+    recognition.onerror = function(event) {
+    console.error("Voice error:", event.error);
+
+    if (event.error === "no-speech") return; // ignore
+
+    let msg = "❌ Voice error";
+
+    if (event.error === "not-allowed") {
+        msg = "❌ Allow microphone permission";
+    } else if (event.error === "network") {
+        msg = "❌ Network issue";
+    }
+
+    addMessage(msg, "bot");
+};
+}
+
+function speak(text) {
+    window.speechSynthesis.cancel(); // stop previous
+
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+
+    speech.rate = 0.95;
+    speech.pitch = 1.50;
+
+    window.speechSynthesis.speak(speech);
+}
+
+function addMessage(text, sender = "bot") {
+    removeTyping();
+
+    let chatBox = document.getElementById("chatBox");
+
+    let message = document.createElement("div");
+    message.className = `message ${sender}`;
+
+    let content = document.createElement("div");
+    content.className = "message-content";
+    content.textContent = text;
+
+    message.appendChild(content);
+    chatBox.appendChild(message);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    // 🔥 ONLY BOT SPEAKS
+    if (sender === "bot") {
+        speak(text);
+    }
+}

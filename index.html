@@ -30,8 +30,9 @@
 
     <!-- Input -->
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Type your message or choose an option...">
-        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        <input type="text" id="userInput" placeholder="Type or speak...">
+        <button onclick="startVoice()" class="mic-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+        <button onclick="sendMessage()" class="send-btn"><i class="fas fa-paper-plane"></i></button>
     </div>
 
     <!-- Restart button -->
@@ -43,5 +44,4 @@
 
 </body>
 </html>
-
 
